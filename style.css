@@ -61,6 +61,21 @@ h1 {
     margin-top: 3px;
 }
  
+#togglePassword {
+  margin-top: 8px;
+  padding: 6px 12px;
+  background-color: #ecf0f1;
+  color: #333;
+  border: 1px solid #bdc3c7;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+#togglePassword:hover {
+  background-color: #dfe6e9;
+}
+
 button[type="submit"] {
   width: 100%;
   padding: 10px;

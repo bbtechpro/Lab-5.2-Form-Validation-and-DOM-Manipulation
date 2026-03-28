@@ -6,6 +6,7 @@ const usernameInput = document.getElementById('username');
 const emailInput = document.getElementById('email');
 const passwordInput = document.getElementById('password');
 const confirmPasswordInput = document.getElementById('confirmPassword');
+
 //Error message spans
 const usernameError = document.getElementById('usernameError');
 const emailError = document.getElementById('emailError');
@@ -47,66 +48,69 @@ function validateEmail() {
     }
 }
 
+// Advanced Password Regex: 8+ chars, 1 uppercase, 1 lowercase, 1 number
+const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+
 function validatePassword() {
     if (passwordInput.validity.valueMissing) {
         passwordError.textContent = 'Password is required.';
-    } else if (passwordInput.validity.tooShort) {
-        passwordError.textContent = 'Password must be at least 8 characters.';
-    } else if (passwordInput.validity.patternMismatch) {
-        passwordError.textContent = 'Password must include uppercase, lowercase, and a number.';
+        passwordInput.setCustomValidity('Required');
+    } else if (!passwordRegex.test(passwordInput.value)) {
+        passwordError.textContent = 'Must be 8+ characters with an uppercase letter, lowercase letter, and a number.';
+        passwordInput.setCustomValidity('Weak Password');
     } else {
         passwordError.textContent = '';
+        passwordInput.setCustomValidity('');
     }
+    validateConfirmPassword();
 }
 
-
-// For the “Confirm Password” field, explicitly check if it matches the “Password” field.
 function validateConfirmPassword() {
-    if (confirmPasswordInput.value === "") {
+    if (confirmPasswordInput.value === '') {
         confirmPasswordError.textContent = 'Please confirm your password.';
-        confirmPasswordInput.setCustomValidity('Required'); // Marks field invalid
+        confirmPasswordInput.setCustomValidity('Required');
     } else if (confirmPasswordInput.value !== passwordInput.value) {
         confirmPasswordError.textContent = 'Passwords do not match.';
-        confirmPasswordInput.setCustomValidity('Mismatch'); // Marks field invalid
+        confirmPasswordInput.setCustomValidity('Mismatch');
     } else {
         confirmPasswordError.textContent = '';
-        confirmPasswordInput.setCustomValidity(''); // Marks field valid
+        confirmPasswordInput.setCustomValidity('');
     }
 }
 
-// function validateConfirmPassword() {
-//     if (confirmPasswordInput.validity.valueMissing) {
-//         confirmPasswordError.textContent = 'Please confirm your password.';
-//     } else if (confirmPasswordInput.value !== passwordInput.value) {
-//         confirmPasswordError.textContent = 'Passwords do not match.';
-//     } else {
-//         confirmPasswordError.textContent = '';
-//     }
-// }
+const toggleBtn = document.getElementById('togglePassword');
 
-// Display appropriate custom error messages in the corresponding <span> elements. Clear messages if valid.
-// Form submission: Add a submit event listener to the form.
+toggleBtn.addEventListener('click', () => {
+    const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+    passwordInput.setAttribute('type', type);
+    confirmPasswordInput.setAttribute('type', type);
+    toggleBtn.textContent = type === 'password' ? 'Show' : 'Hide';
+});
+
+// form.checkValidity() always returns true when the form has novalidate (per HTML spec),
+// so we must check each control that uses setCustomValidity / constraints.
+function allFieldsValid() {
+    return (
+        usernameInput.checkValidity() &&
+        emailInput.checkValidity() &&
+        passwordInput.checkValidity() &&
+        confirmPasswordInput.checkValidity()
+    );
+}
+
 form.addEventListener('submit', (event) => {
-    event.preventDefault(); // Call event.preventDefault().
+    event.preventDefault();
 
-// Perform a final validation check on all fields.
     validateUsername();
     validateEmail();
     validatePassword();
     validateConfirmPassword();
 
-// If all fields are valid:
-// Display a success message (e.g., an alert or update a status message on the page).
-// Save the username to localStorage.
-// Optionally, reset the form.
-    if (form.checkValidity()) {
+    if (allFieldsValid()) {
         alert('Registration successful!');
         localStorage.setItem('username', usernameInput.value);
         form.reset();
-    }
-
-// If any field is invalid, ensure error messages are displayed and focus on the first invalid field.
-    else {
+    } else {
         const firstInvalidField = form.querySelector(':invalid');
         if (firstInvalidField) {
             firstInvalidField.focus();
