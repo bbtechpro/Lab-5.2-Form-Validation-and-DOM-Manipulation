@@ -60,29 +60,17 @@ function validatePassword() {
 }
 
 
+
 // For the “Confirm Password” field, explicitly check if it matches the “Password” field.
 function validateConfirmPassword() {
-    if (confirmPasswordInput.value === "") {
+    if (confirmPasswordInput.validity.valueMissing) {
         confirmPasswordError.textContent = 'Please confirm your password.';
-        confirmPasswordInput.setCustomValidity('Required'); // Marks field invalid
     } else if (confirmPasswordInput.value !== passwordInput.value) {
         confirmPasswordError.textContent = 'Passwords do not match.';
-        confirmPasswordInput.setCustomValidity('Mismatch'); // Marks field invalid
     } else {
         confirmPasswordError.textContent = '';
-        confirmPasswordInput.setCustomValidity(''); // Marks field valid
     }
 }
-
-// function validateConfirmPassword() {
-//     if (confirmPasswordInput.validity.valueMissing) {
-//         confirmPasswordError.textContent = 'Please confirm your password.';
-//     } else if (confirmPasswordInput.value !== passwordInput.value) {
-//         confirmPasswordError.textContent = 'Passwords do not match.';
-//     } else {
-//         confirmPasswordError.textContent = '';
-//     }
-// }
 
 // Display appropriate custom error messages in the corresponding <span> elements. Clear messages if valid.
 // Form submission: Add a submit event listener to the form.
